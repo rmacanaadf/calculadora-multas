@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora de Multa por Cancelamento</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('josue.png') no-repeat center center fixed;
+      background-size: cover;
+      backdrop-filter: blur(6px);
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 720px;
+      margin: 60px auto;
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    h1, h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      text-align: left;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      padding: 12px 25px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .logo {
+      max-width: 200px;
+      margin-bottom: 15px;
+    }
+    .creditos {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .midia-social {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+      gap: 10px;
+    }
+    .icon {
+      width: 45px;
+      height: 45px;
+      background-color: #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 12px;
+    }
+    .icon-img {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+    }
+    .resultado {
+      font-size: 1.1rem;
+      margin-top: 10px;
+      color: #333;
+    }
+    .btn-voltar {
+      background-color: #28a745;
+      margin-top: 20px;
+    }
+  
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #28a745;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
+    display: none;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .fade-in {
+    opacity: 0;
+    transition: opacity 0.6s ease-in;
+  }
+  .fade-in.show {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo-canaa.png" alt="Logo Canaa Telecom" class="logo" />
+    <h1>Calculadora de Multa por Cancelamento</h1>
+
+    <div id="formulario">
+      <label for="meses">Meses restantes no contrato:</label>
+      <select id="meses">
+        <option value="450">1 mês</option>
+        <option value="412.5">2 meses</option>
+        <option value="375">3 meses</option>
+        <option value="337.5">4 meses</option>
+        <option value="300">5 meses</option>
+        <option value="262.5">6 meses</option>
+        <option value="225">7 meses</option>
+        <option value="187.5">8 meses</option>
+        <option value="150">9 meses</option>
+        <option value="112.5">10 meses</option>
+        <option value="75">11 meses</option>
+        <option value="37.5">12 meses</option>
+      </select>
+
+      <label for="valorFatura">Valor da fatura atual (R$):</label>
+      <input type="number" id="valorFatura" step="0.01" placeholder="Ex: 99.90"/>
+
+      <label for="diasUtilizados">Dias utilizados no mês:</label>
+      <input type="number" id="diasUtilizados" placeholder="Ex: 20"/ max="31">
+
+      <button onclick="calcularMulta()">Calcular Multa</button>
+    </div>
+
+    <div class="spinner" id="spinner"></div>
+<div id="resultadoFinal" class="fade-in" style="display:none;">
+      <h2>Resultado do Cálculo</h2>
+      <div class="resultado" id="resMulta"></div>
+      <div class="resultado" id="resFatura"></div>
+      <div class="resultado" id="resTotal"></div>
+      <button class="btn-voltar" onclick="voltar()">Voltar</button>
+    </div>
+
+    <hr style="margin-top: 40px; margin-bottom: 20px; border: 0; border-top: 2px solid #ccc;">
+<div class="creditos">
+      Desenvolvido por: <strong>Wevertton Rodrigues</strong> - Técnico em Informática
+      <div class="midia-social">
+        <a href="https://linktr.ee/weverttongg" class="icon" target="_blank">
+          <img src="https://cdn-icons-png.flaticon.com/512/724/724664.png" class="icon-img" alt="Contato">
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calcularMulta() {
+  document.getElementById('spinner').style.display = 'block';
+  document.getElementById('resultadoFinal').classList.remove('show');
+  setTimeout(function() {
+      const valorMultaBase = parseFloat(document.getElementById('meses').value);
+      const valorFatura = parseFloat(document.getElementById('valorFatura').value);
+      const diasUtilizados = parseInt(document.getElementById('diasUtilizados').value);
+
+      if (isNaN(valorFatura) || isNaN(diasUtilizados)) {
+        alert("Preencha todos os campos corretamente.");
+        return;
+      }
+
+      const valorProporcional = (valorFatura / 30) * diasUtilizados;
+      const totalPagar = valorMultaBase + valorProporcional;
+
+      document.getElementById("formulario").style.display = "none";
+      document.getElementById("resultadoFinal").style.display = "block";
+      document.getElementById("resMulta").innerHTML = "Multa de cancelamento: <strong style='color:green'>R$ " + valorMultaBase.toFixed(2) + "</strong>";
+      document.getElementById("resFatura").innerHTML = "Fatura proporcional: <strong style='color:green'>R$ " + valorProporcional.toFixed(2) + "</strong>";
+      document.getElementById("resTotal").innerHTML = "Total a pagar: <strong style='color:green'>R$ " + totalPagar.toFixed(2) + "</strong>";
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('resultadoFinal').classList.add('show');
+  }, 5000);
+    }
+
+    function voltar() {
+      document.getElementById("formulario").style.display = "block";
+      document.getElementById("resultadoFinal").style.display = "none";
+    }
+  </script>
+</body>
+</html>
